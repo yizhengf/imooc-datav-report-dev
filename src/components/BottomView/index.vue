@@ -1,5 +1,5 @@
 <template>
-  <div>sales view</div>
+  <div>bottom view</div>
 </template>
 
 <script>

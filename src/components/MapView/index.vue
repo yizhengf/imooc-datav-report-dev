@@ -1,5 +1,6 @@
 <template>
-  <div>sales view</div>
+  <div>map view</div>
+
 </template>
 
 <script>
