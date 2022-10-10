@@ -1,7 +1,6 @@
 <template>
   <div class="top-view">
     <el-row :gutter="20">
-
       <el-col :span="6">
         <el-card shadow="hover">
          <total-sales />

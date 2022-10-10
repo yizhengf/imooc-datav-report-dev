@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <top-view></top-view>
-    <bottom-view></bottom-view>
     <sales-view></sales-view>
+    <bottom-view></bottom-view>
     <map-view></map-view>
   </div>
 </template>
@@ -15,10 +15,15 @@ import MapView from '../components/MapView'
 
 export default {
   name: 'Home',
+  data () {
+    return {
+      map:''
+    }
+  },
   components: {
     TopView,
-    BottomView,
     SalesView,
+    BottomView,
     MapView
   }
 }

@@ -1,10 +1,16 @@
 <template>
   <div class="common-card">
-    <div class="title">1</div>
-    <div class="value">2</div>
-    <div class="chart"/>
+    <div class="title">{{title}}</div>
+    <div class="value">{{value}}</div>
+    <div class="chart">
+      <slot>
+
+      </slot>
+    </div>
     <div class="line"/>
-    <div class="total">5</div>
+    <div class="total">
+      <slot name="footer"></slot>
+    </div>
 
   </div>
 
@@ -12,7 +18,10 @@
 
 <script>
 export default {
-  name: 'index'
+  props: {
+    title: String,
+    value: String
+  }
 }
 </script>
 
@@ -30,7 +39,6 @@ export default {
 }
 .chart{
   height: 50px;
-  background:orangered;
 }
 
 .line{
@@ -40,5 +48,31 @@ export default {
 .total{
   font-size: 12px;
   color: #666;
+}
+
+</style>
+
+<style lang="scss">
+.emphasis {
+  margin-left: 5px;
+  color: #333;
+  font-weight: 700;
+}
+.increase {
+  width: 0;
+  height: 0;
+  border-width: 3px;
+  border-color: transparent transparent red transparent;
+  border-style: solid;
+  margin: 0 0 3px 5px;
+}
+
+.decrease {
+  width: 0;
+  height: 0;
+  border-width: 3px;
+  border-color: green transparent transparent transparent;
+  border-style: solid;
+  margin: 3px 0 0 5px;
 }
 </style>
