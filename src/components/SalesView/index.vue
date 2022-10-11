@@ -6,6 +6,7 @@
           <el-menu
             :default-active="activeIndex"
             mode="horizontal"
+            @select="onMenuSelect"
             class="sales-view-menu"
           >
             <el-menu-item index="1">销售额</el-menu-item>
@@ -34,7 +35,7 @@
       </template>
       <template>
         <div class="sales-view-chart-wrapper">
-          <v-chart :option="chartOption" />
+          <v-chart :options="chartOption" />
           <div class="sales-view-list">
             <div class="sales-view-title">排行榜</div>
             <div class="list-item-wrapper">
@@ -52,141 +53,123 @@
 </template>
 
 <script>
-    export default {
-        data () {
-            return {
-              activeIndex : '1',
-              radioSelect: '今日',
-              date : null,
-              pickerOptions: {
-                shortcuts: [{
-                  text: '最近一周',
-                  onClick (picker) {
-                    const start = new Date()
-                    const end = new Date()
-                    start.setTime(start.getTime() - 3600 * 24 * 1000 * 7)
-                    picker.$emit('pick', [start, end])
-                  }
-                },
-                  {
-                    text: '最近一个月',
-                    onClick (picker) {
-                      const start = new Date()
-                      const end = new Date()
-                      start.setTime(start.getTime() - 3600 * 24 * 1000 * 30)
-                      picker.$emit('pick', [start, end])
-                    }
-                  },
-                  {
-                    text: '最近三个月',
-                    onClick (picker) {
-                      const start = new Date()
-                      const end = new Date()
-                      start.setTime(start.getTime() - 3600 * 24 * 1000 * 30 * 3)
-                      picker.$emit('pick', [start, end])
-                    }
-                  }]
-              },
-              chartOption:{
-                title:{
-                    text:'年度销售额',
-                    textStyle:{
-                      fontSize:12,
-                      color: '#666'
-                    },
-                  left: 25,
-                  top:20
-                },
-                xAxis:{
-                  type:'category',
-                  data:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-                  axisTick:{
-                    alignWithLabel:true,
-                    lineStyle: {
-                      color:'#999'
-                    }
-                  },
-                  axisLine: {
-                    lineStyle:{
-                      color: '#999'
-                    }
-                  },
-                  axisLabel:{
-                    color: '#333'
-                  }
+import commonDataMixin from '../../mixins/commonDataMixin'
 
-
-                },
-                yAxis:{
-                    axisLine:{
-                      show : false
-                    },
-                    axisTick:{
-                      show : false
-                    },
-                    splitLine:{
-                      lineStyle:{
-                          type : 'dotted',
-                          color: '#eee'
-                      }
-                    }
-                },
-                series:[{
-                  type:'bar',
-                  barWidth:'35%',
-                  data:[200,250,300,350,600,400,200,250,300,350,600,400]
-                }],
-                color:['#3398DB'],
-                grid:{
-                  top: 70,
-                  left:60,
-                  right:60,
-                  bottom:50
-
-                }
-
-              },
-
-              rankData:[
-                {
-                no:1,
-                name:'麦当劳',
-                money:'323,424'
-              },
-                {
-                  no:2,
-                  name:'麦当劳',
-                  money:'323,424'
-                }, {
-                  no:3,
-                  name:'麦当劳',
-                  money:'323,424'
-                },
-                {
-                  no:4,
-                  name:'麦当劳',
-                  money:'323,424'
-                }, {
-                  no:5,
-                  name:'麦当劳',
-                  money:'323,424'
-                }, {
-                  no:6,
-                  name:'麦当劳',
-                  money:'323,424'
-                },
-                {
-                  no:7,
-                  name:'麦当劳',
-                  money:'323,424'
-                }]
-
-
-            }
-        }
+export default {
+  mixins: [commonDataMixin],
+  data () {
+    return {
+      activeIndex: '1',
+      radioSelect: '今日',
+      date: null,
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick (picker) {
+            const start = new Date()
+            const end = new Date()
+            start.setTime(start.getTime() - 3600 * 24 * 1000 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick (picker) {
+            const start = new Date()
+            const end = new Date()
+            start.setTime(start.getTime() - 3600 * 24 * 1000 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick (picker) {
+            const start = new Date()
+            const end = new Date()
+            start.setTime(start.getTime() - 3600 * 24 * 1000 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      chartOption: {}
     }
-
-
+  },
+  computed: {
+    rankData () {
+      return this.activeIndex === '1' ? this.orderRank : this.userRank
+    }
+  },
+  watch: {
+    orderFullYear () {
+      this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+    }
+  },
+  methods: {
+    onMenuSelect (index) {
+      this.activeIndex = index
+      if (index === '1') {
+        this.render(this.orderFullYear, this.orderFullYearAxis, '年度销售额')
+      } else {
+        this.render(this.userFullYear, this.userFullYearAxis, '年度用户访问量')
+      }
+    },
+    render (data, axis, title) {
+      this.chartOption = {
+        title: {
+          text: title,
+          textStyle: {
+            fontSize: 12,
+            color: '#666'
+          },
+          left: 25,
+          top: 20
+        },
+        xAxis: {
+          type: 'category',
+          data: axis,
+          axisTick: {
+            alignWithLabel: true,
+            lineStyle: {
+              color: '#999'
+            }
+          },
+          axisLine: {
+            lineStyle: {
+              color: '#999'
+            }
+          },
+          axisLabel: {
+            color: '#333'
+          }
+        },
+        yAxis: {
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            lineStyle: {
+              type: 'dotted',
+              color: '#eee'
+            }
+          }
+        },
+        series: [{
+          type: 'bar',
+          barWidth: '35%',
+          data
+        }],
+        color: ['#3398DB'],
+        grid: {
+          top: 70,
+          left: 60,
+          right: 60,
+          bottom: 50
+        }
+      }
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -286,6 +269,4 @@
     }
   }
 }
-
-
 </style>

@@ -12,19 +12,52 @@ import TopView from '../components/TopView'
 import SalesView from '../components/SalesView'
 import BottomView from '../components/BottomView'
 import MapView from '../components/MapView'
+import { wordCloud, mapScatter, screenData } from '../api'
 
 export default {
   name: 'Home',
-  data () {
-    return {
-      map:''
-    }
-  },
   components: {
     TopView,
     SalesView,
     BottomView,
     MapView
+  },
+  methods: {
+    getReportData () {
+      return this.reportData
+    },
+    getWordCloud () {
+      return this.wordCloud
+    },
+    getMapData () {
+      return this.mapData
+    }
+  },
+  data () {
+    return {
+      reportData: null,
+      wordCloud: null,
+      mapData: null
+    }
+  },
+  provide () {
+    return {
+      getReportData: this.getReportData,
+      getWordCloud: this.getWordCloud,
+      getMapData: this.getMapData
+
+    }
+  },
+  mounted () {
+    screenData().then(data => {
+      this.reportData = data
+    })
+    wordCloud().then(data => {
+      this.wordCloud = data
+    })
+    mapScatter().then(data => {
+      this.mapData = data
+    })
   }
 }
 </script>
@@ -32,7 +65,6 @@ export default {
 <style>
 .home {
   width: 100%;
-  height: 100%;
   padding: 20px;
   background: #eee;
   box-sizing: border-box;
